@@ -13,18 +13,22 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         self.command = command
         self.label_list = []
         self.button_list = []
+        self.remove_list = []
         self.query = []
 
     def add_item(self, item,query):
         label = customtkinter.CTkLabel(self, text=item, compound="left", padx=5, anchor="w", wraplength=500)
-        button = customtkinter.CTkButton(self, text="Tải xuống", width=100, height=24)
+        button = customtkinter.CTkButton(self, text="Tải xuống", width=80, height=24)
+        remove_btn = customtkinter.CTkButton(self,text="Xóa",command=lambda: self.remove_item(self,item), width=40, height=24)
         if self.command is not None:
             button.configure(command=lambda: self.command(query))
         label.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
-        button.grid(row=len(self.button_list), column=1, pady=(0, 10), padx=5)
+        button.grid(row=len(self.button_list), column=2, pady=(0, 10), padx=5)
+        remove_btn.grid(row=len(self.remove_list), column=1, pady=(0, 10), padx=5)
         self.label_list.append(label)
         self.button_list.append(button)
         self.query.append(query)
+        self.remove_list.append(remove_btn)
 
     def remove_item(self, item):
         for label, button in zip(self.label_list, self.button_list):

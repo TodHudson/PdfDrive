@@ -131,18 +131,51 @@
 #     app = App()
 #     app.mainloop()
 
-import tkinter as tk
-from tkinter import filedialog
+# import tkinter as tk
+# from tkinter import filedialog
 
-# Create a Tkinter root window
-root = tk.Tk()
-root.withdraw()  # Hide the root window
+# # Create a Tkinter root window
+# root = tk.Tk()
+# root.withdraw()  # Hide the root window
 
-# Open the file dialog for selecting a directory
-selected_directory = filedialog.askdirectory()
+# # Open the file dialog for selecting a directory
+# selected_directory = filedialog.askdirectory()
 
-# Display the selected directory path
-print("Selected directory:", selected_directory)
+# # Display the selected directory path
+# print("Selected directory:", selected_directory)
 
-# Close the Tkinter root window
-root.destroy()
+# # Close the Tkinter root window
+# root.destroy()
+
+import multiprocessing
+import requests
+import os
+
+def download_file(url, download_path):
+    """Download a file from a URL and save it to a specified path."""
+    local_filename = os.path.join(download_path, url.split('/')[-1])
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(local_filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                if chunk:  # filter out keep-alive new chunks
+                    f.write(chunk)
+    print(f"Downloaded: {local_filename}")
+
+def download_files(url_list, download_path):
+    """Download multiple files in parallel."""
+    os.makedirs(download_path, exist_ok=True)
+    # Create a pool of processes
+    with multiprocessing.Pool() as pool:
+        # Map the download_file function to the URL list
+        pool.starmap(download_file, [(url, download_path) for url in url_list])
+
+if __name__ == "__main__":
+    urls = [
+        "http://localhost:1412/438112390_429880503231508_7178809094790691885_n.jpg",
+        # Add more URLs as needed
+    ]
+    download_directory = "D:\\trung_tam_chi_dung\\App\\tool"
+
+    # Start the download process
+    download_files(urls, download_directory)
